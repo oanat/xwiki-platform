@@ -75,8 +75,7 @@ public class StaticListClassTest extends AbstractBridgedXWikiComponentTestCase
         staticListClass.setValues(VALUES_WITH_HTML_SPECIAL_CHARS.get(0) + '|' + VALUES_WITH_HTML_SPECIAL_CHARS.get(1)
             + '=' + StringUtils.reverse(VALUES_WITH_HTML_SPECIAL_CHARS.get(1)) + '|'
             + VALUES_WITH_HTML_SPECIAL_CHARS.get(2));
-        assertEquals("a&#60;b&#62;c*3&#39;2&#34;1*x&#123;y&#38;z",
-            staticListClass.displayView(propertyName, "", object, null));
+        assertEquals("a<b>c*3'2\"1*x{y&z", staticListClass.displayView(propertyName, "", object, null));
     }
 
     /**
