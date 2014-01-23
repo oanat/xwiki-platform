@@ -3,7 +3,13 @@
   #userPicker_import($isMultiSelect)
   #set ($id = $escapetool.xml("${prefix}${name}"))
   #set ($class = 'suggestUsers')
-  #set ($userScope = "$!services.wiki.user.userScope")
+  ## USH Customization: new service doesn't exist, all subwikis are workspaces, use global users
+  ## #set ($userScope = "$!services.wiki.user.userScope")
+  #set($userScope = '')
+  #if (!$xcontext.isMainWiki())
+    #set ($userScope = "GLOBAL_ONLY")
+  #end
+  ## End customization
   #if ($userScope == 'LOCAL_AND_GLOBAL')
     #set ($class = "$class withScope")
   #elseif ($userScope == 'GLOBAL_ONLY')
