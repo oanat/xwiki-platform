@@ -62,6 +62,20 @@
     tree${tviewid} = new YAHOO.widget.TreeView("treeview${tviewid}");
     var tree = tree${tviewid};
     var nodes = nodes${tviewid};
+
+    ## ----------------------------------
+    ## Start XWIKI-8760
+    ## treeview bug : JS error if parent is not in the list of tree IDs (in this case: Classement.WebHome document is parent but does not have a 'ClassificationCode.CategoryClass' object)
+    ## -> check if parent node is in the list of tree IDs
+    ## ----------------------------------
+    #set($treeIDList = [])
+    #foreach($item in $treelist)
+      #set($discard = $treeIDList.add($item.id))
+    #end
+    ## ----------------------------------
+    ## End XWIKI-8760
+    ## ----------------------------------
+
     #foreach ($item in $treelist)
       #set ($checked = $selectlist.contains($item.getId()))
       #if ($item.value.length() > 80)
@@ -70,13 +84,24 @@
         #set ($title_item = $item.value)
       #end
       #set ($title_item = $title_item.replaceAll("[\r\n]"," "))
+      ## ----------------------------------
+      ## Start XWIKI-8760
+      ## set parent to empty string when it is not in the list of tree IDs
+      ## ----------------------------------
+      #set ($parentID = $item.parent)
+      #if(!$treeIDList.contains($parentID))
+        #set ($parentID = '')
+      #end 
       #if ($mode == 'view')
         #if ($checked)
-          addTreeElementViewMode(tree, nodes, "${escapetool.javascript($item.id)}", "${escapetool.javascript($title_item)}", "${escapetool.javascript($item.parent)}")
+          addTreeElementViewMode(tree, nodes, "${escapetool.javascript($item.id)}", "${escapetool.javascript($title_item)}", "${escapetool.javascript($parentID)}")
         #end
       #else
-        addTreeElement(tree, nodes, "${escapetool.javascript($item.id)}", "${escapetool.javascript($title_item)}", "${escapetool.javascript($item.parent)}", #if($checked) true #else false #end)
+        addTreeElement(tree, nodes, "${escapetool.javascript($item.id)}", "${escapetool.javascript($title_item)}", "${escapetool.javascript($parentID)}", #if($checked) true #else false #end)
       #end
+      ## ----------------------------------
+      ## End XWIKI-8760
+      ## ----------------------------------
     #end
     tree.draw();
   }
