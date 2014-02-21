@@ -254,6 +254,7 @@ public abstract class AbstractWikiService implements WikiService
     public String getUploadURL(WikiPageReference reference)
     {
         String queryString = "form_token=" + csrf.getToken();
+        logger.debug("Context user for uploadURL:" + documentAccessBridge.getCurrentUser());
         return documentAccessBridge.getDocumentURL(entityReferenceConverter.convert(reference), "upload", queryString,
             null);
     }
