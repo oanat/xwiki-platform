@@ -56,6 +56,8 @@ public class SearchResults extends Api
 
     private List<SearchResult> relevantResults;
 
+    private boolean isAdminMode;
+
     /**
      * @param results Lucene search results
      * @param xwiki xwiki instance for access rights checking
@@ -67,6 +69,17 @@ public class SearchResults extends Api
         this.results = results;
         this.searcher = searcher;
         this.xwiki = xwiki;
+    }
+
+    public SearchResults(TopDocsCollector< ? extends ScoreDoc> results, IndexSearcher searcher, XWiki xwiki,
+        boolean isAdminMode, XWikiContext context)
+    {
+        super(context);
+
+        this.results = results;
+        this.searcher = searcher;
+        this.xwiki = xwiki;
+        this.isAdminMode = isAdminMode;
     }
 
     private List<SearchResult> getRelevantResults()
@@ -86,7 +99,7 @@ public class SearchResults extends Api
                                 Utils.getComponent(EntityReferenceSerializer.TYPE_STRING))
                                 .serialize(result.getDocumentReference());
                         if (this.xwiki.exists(result.getDocumentReference())
-                            && this.xwiki.hasAccessLevel("view", this.context.getUser(), prefixedFullName)) {
+                            && (this.xwiki.hasAccessLevel("view", this.context.getUser(), prefixedFullName) || isAdminMode)) {
                             this.relevantResults.add(result);
                         }
                     }
@@ -199,7 +212,7 @@ public class SearchResults extends Api
                             pageName = result.getWiki() + ":" + result.getSpace() + "." + result.getName();
                         }
                         if (result.isWikiContent() && this.xwiki.exists(pageName)
-                            && this.xwiki.checkAccess(pageName, "view")) {
+                            && (this.xwiki.checkAccess(pageName, "view") || isAdminMode)) {
                             if (resultcount >= listStartIndex) {
                                 relResults.add(result);
                             }

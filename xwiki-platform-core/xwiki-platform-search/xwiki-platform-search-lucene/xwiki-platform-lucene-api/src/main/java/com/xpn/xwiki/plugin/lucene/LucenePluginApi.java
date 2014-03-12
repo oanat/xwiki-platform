@@ -368,4 +368,14 @@ public class LucenePluginApi extends PluginApi<LucenePlugin>
         return null;
     }
 
+    public boolean isAdminMode()
+    {
+        return getProtectedPlugin().isAdminMode();
+    }
+
+    public void setAdminMode(boolean adminMode)
+    {
+        getProtectedPlugin().setAdminMode(adminMode);
+    }
+
 }

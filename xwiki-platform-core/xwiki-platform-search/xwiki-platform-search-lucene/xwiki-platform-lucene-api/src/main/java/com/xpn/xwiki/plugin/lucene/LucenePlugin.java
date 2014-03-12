@@ -139,6 +139,8 @@ public class LucenePlugin extends XWikiDefaultPlugin
 
     private IndexRebuilder indexRebuilder;
 
+    private boolean isAdminMode = false;
+
     public LucenePlugin(String name, String className, XWikiContext context)
     {
         super(name, className, context);
@@ -148,6 +150,16 @@ public class LucenePlugin extends XWikiDefaultPlugin
     public String getName()
     {
         return "lucene";
+    }
+
+    public boolean isAdminMode()
+    {
+        return isAdminMode;
+    }
+
+    public void setAdminMode(boolean adminMode)
+    {
+        this.isAdminMode = adminMode;
     }
 
     @Override
@@ -405,7 +417,8 @@ public class LucenePlugin extends XWikiDefaultPlugin
         LOGGER.debug("query [{}] returned {} hits", q, results.getTotalHits());
 
         // Transform the raw Lucene search results into XWiki-aware results
-        return new SearchResults(results, searcher, new com.xpn.xwiki.api.XWiki(context.getWiki(), context), context);
+        return new SearchResults(results, searcher, new com.xpn.xwiki.api.XWiki(context.getWiki(), context),
+            isAdminMode, context);
     }
 
     /**
