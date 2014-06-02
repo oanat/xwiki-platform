@@ -349,20 +349,20 @@ public class FeedPluginApi extends PluginApi<FeedPlugin>
      */
     public SyndImage getDefaultFeedImage()
     {
-        // Currently, getSkinFile method returns relative (internal) URLs. I couldn't find a way to
-        // get the external URL for a skin file. Is this something forbidden? I've noticed that we
-        // actually compute the full URL but we strip it with urlFactory.getURL(url, context). So
-        // what do you think of overloading the getSkinFile method by adding a absoluteURL flag?
         XWiki xwiki = getXWikiContext().getWiki();
         String fileName = xwiki.getSkinPreference("logo", "logo.png", getXWikiContext());
         String url = xwiki.getSkinFile(fileName, getXWikiContext());
         String port = "";
         XWikiRequest request = getXWikiContext().getRequest();
-        if (("http".equals(request.getScheme()) && request.getServerPort() != 80)
-            || ("https".equals(request.getScheme()) && request.getServerPort() != 443)) {
-            port = ":" + request.getServerPort();
+        // check if the URLs is not already absolute (the case for domain based workspaces using a skin on the main
+        // wiki)
+        if (!url.contains("://")) {
+            if (("http".equals(request.getScheme()) && request.getServerPort() != 80)
+                || ("https".equals(request.getScheme()) && request.getServerPort() != 443)) {
+                port = ":" + request.getServerPort();
+            }
+            url = request.getScheme() + "://" + request.getServerName() + port + url;
         }
-        url = request.getScheme() + "://" + request.getServerName() + port + url;
         String link = "http://" + request.getServerName();
         return getFeedImage(url, link, "XWiki Logo", "XWiki Logo");
     }
